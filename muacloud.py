@@ -9,12 +9,12 @@ def muacloud():
         driver = get_web_driver()
 #         driver.get("https://12o.ooo/auth/login")
         driver.get("https://12o.ooo/auth/login")
-        driver.find_element_by_xpath("//*[@id='email']").send_keys(username)
-        driver.find_element_by_xpath("//*[@id='password']").send_keys(password)
-        driver.find_element_by_xpath("//*[@id='login_submit']").click()
+        driver.find_element_by_xpath("//*[@type='email']").send_keys(username)
+        driver.find_element_by_xpath("//*[@type='password']").send_keys(password)
+        driver.find_element_by_xpath("//*[@type='button']").click()
 
-        if driver.find_elements_by_xpath("//*[@id='checkin']") != []:
-            button = driver.find_element_by_xpath("//*[@id='checkin']")
+        if driver.find_elements_by_xpath("//*[@class='xboard-checkin-button']") != []:
+            button = driver.find_element_by_xpath("//*[@class='xboard-checkin-button']")
             driver.execute_script("arguments[0].click();", button)
             # driver.find_element_by_xpath("//*[@id='checkin']").click()
             print('muacloud签到成功')
