@@ -1,4 +1,7 @@
 from util import *
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 username = sys.argv[1] # 登录账号
 password = sys.argv[2] # 登录密码
@@ -9,20 +12,31 @@ def muacloud():
         driver = get_web_driver()
         driver.get("https://12o.ooo/auth/login")
         
-        # 修改1：邮箱输入框 - 使用 placeholder 属性定位
-        driver.find_element_by_xpath("//input[@placeholder='邮箱']").send_keys(username)
+        # 等待页面加载完成
+        wait = WebDriverWait(driver, 10)
         
-        # 修改2：密码输入框 - 使用 placeholder 属性定位
-        driver.find_element_by_xpath("//input[@placeholder='密码']").send_keys(password)
+        # 修改1：等待邮箱输入框出现，然后输入
+        email_input = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@type='email']")))
+        email_input.clear()
+        email_input.send_keys(username)
         
-        # 修改3：登录按钮 - 使用按钮文本内容定位
-        driver.find_element_by_xpath("//button[contains(@class, 'n-button') and contains(., '登入')]").click()
+        # 修改2：等待密码输入框出现，然后输入
+        password_input = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@type='password']")))
+        password_input.clear()
+        password_input.send_keys(password)
         
-        # 签到按钮的 class 保持不变，这部分不需要修改
-        if driver.find_elements_by_xpath("//*[@class='xboard-checkin-button']") != []:
-            button = driver.find_element_by_xpath("//*[@class='xboard-checkin-button']")
-            driver.execute_script("arguments[0].click();", button)
+        # 修改3：等待登录按钮可点击，然后点击
+        login_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'n-button') and contains(., '登入')]")))
+        login_button.click()
+        
+        # 等待签到按钮出现
+        try:
+            checkin_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@class='xboard-checkin-button']")))
+            driver.execute_script("arguments[0].click();", checkin_button)
             print('muacloud签到成功')
+        except:
+            print('muacloud未找到签到按钮，可能已经签到过了')
+            
     except:
         raise
     finally:
